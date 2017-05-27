@@ -808,7 +808,7 @@
                 <item row="2" column="1">
                  <widget class="QComboBox" name="simpleOutputABitrate">
                   <property name="currentIndex">
-                   <number>8</number>
+                   <number>11</number>
                   </property>
                   <item>
                    <property name="text">
@@ -863,6 +863,16 @@
                   <item>
                    <property name="text">
                     <string>320</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                     <string>1024</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                     <string>2048</string>
                    </property>
                   </item>
                  </widget>
@@ -2280,7 +2290,7 @@
                        <item row="0" column="1">
                         <widget class="QComboBox" name="advOutTrack1Bitrate">
                          <property name="currentIndex">
-                          <number>8</number>
+                          <number>11</number>
                          </property>
                          <item>
                           <property name="text">
@@ -2335,6 +2345,16 @@
                          <item>
                           <property name="text">
                            <string>320</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                           <string>1024</string>
+                          </property>
+                         </item>
+                         <item>
+                          <property name="text">
+                            <string>2048</string>
                           </property>
                          </item>
                         </widget>
@@ -2414,7 +2434,7 @@
                        <item row="0" column="1">
                         <widget class="QComboBox" name="advOutTrack2Bitrate">
                          <property name="currentIndex">
-                          <number>8</number>
+                          <number>11</number>
                          </property>
                          <item>
                           <property name="text">
@@ -2471,6 +2491,16 @@
                            <string>320</string>
                           </property>
                          </item>
+                         <item>
+                           <property name="text">
+                             <string>1024</string>
+                           </property>
+                         </item>
+                         <item>
+                           <property name="text">
+                             <string>2048</string>
+                           </property>
+                         </item>                          
                         </widget>
                        </item>
                        <item row="1" column="0">
@@ -2529,7 +2559,7 @@
                        <item row="0" column="1">
                         <widget class="QComboBox" name="advOutTrack3Bitrate">
                          <property name="currentIndex">
-                          <number>8</number>
+                          <number>11</number>
                          </property>
                          <item>
                           <property name="text">
@@ -2585,6 +2615,16 @@
                           <property name="text">
                            <string>320</string>
                           </property>
+                         </item>
+                         <item>
+                           <property name="text">
+                             <string>1024</string>
+                           </property>
+                         </item>
+                         <item>
+                           <property name="text">
+                             <string>2048</string>
+                           </property>
                          </item>
                         </widget>
                        </item>
@@ -2644,7 +2684,7 @@
                        <item row="0" column="1">
                         <widget class="QComboBox" name="advOutTrack4Bitrate">
                          <property name="currentIndex">
-                          <number>8</number>
+                          <number>11</number>
                          </property>
                          <item>
                           <property name="text">
@@ -2701,6 +2741,16 @@
                            <string>320</string>
                           </property>
                          </item>
+                         <item>
+                           <property name="text">
+                             <string>1024</string>
+                           </property>
+                         </item>
+                         <item>
+                           <property name="text">
+                             <string>2048</string>
+                           </property>
+                         </item>                          
                         </widget>
                        </item>
                        <item row="1" column="0">
@@ -2816,6 +2866,16 @@
                            <string>320</string>
                           </property>
                          </item>
+                         <item>
+                           <property name="text">
+                             <string>1024</string>
+                           </property>
+                         </item>
+                         <item>
+                           <property name="text">
+                             <string>2048</string>
+                           </property>
+                         </item>                         
                         </widget>
                        </item>
                        <item row="1" column="0">
@@ -2931,6 +2991,16 @@
                            <string>320</string>
                           </property>
                          </item>
+                         <item>
+                           <property name="text">
+                             <string>1024</string>
+                           </property>
+                         </item>
+                         <item>
+                           <property name="text">
+                             <string>2048</string>
+                           </property>
+                         </item>                          
                         </widget>
                        </item>
                        <item row="1" column="0">
@@ -3013,10 +3083,10 @@
          <item row="1" column="1">
           <widget class="QComboBox" name="channelSetup">
            <property name="currentText">
-            <string>Mono</string>
+            <string>Stereo</string>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>1</number>
            </property>
            <item>
             <property name="text">
@@ -3028,6 +3098,44 @@
              <string>Stereo</string>
             </property>
            </item>
+            <item>
+              <property name="text">
+                <string>2.1</string>
+              </property>
+            </item>
+            <item>
+              <property name="text">
+                <string>4.0 Quad</string>
+              </property>
+            </item>
+            <item>
+              <property name="text">
+                <string>4.1</string>
+              </property>
+            </item>
+            <item>
+              <property name="text">
+                <string>5.1</string>
+              </property>
+            </item>
+            <item>
+              <property name="text">
+                <string>7.1</string>
+              </property>
+            </item>
+            <!--  8.0 inactive for now due to channel mapping issues; \
+            also the aac, vorbis, opus encoders do at most 7.1 and do not 
+            recognize 8.0 ; 16.0 requires twice larger samples -->
+            <!--<item>
+              <property name="text">
+                <string>8.0</string>
+              </property>
+            </item>
+            <item>
+              <property name="text">
+                <string>16.0</string>
+              </property>
+            </item>-->
           </widget>
          </item>
          <item row="2" column="0">

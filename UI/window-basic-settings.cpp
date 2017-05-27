@@ -2008,8 +2008,26 @@ void OBSBasicSettings::LoadAudioSettings()
 
 	if (strcmp(speakers, "Mono") == 0)
 		ui->channelSetup->setCurrentIndex(0);
-	else
+	if (strcmp(speakers, "Stereo") == 0)
 		ui->channelSetup->setCurrentIndex(1);
+	if (strcmp(speakers, "2.1") == 0)
+		ui->channelSetup->setCurrentIndex(2);
+	if (strcmp(speakers, "4.0 Quad") == 0)
+		ui->channelSetup->setCurrentIndex(3);
+	if (strcmp(speakers, "4.1") == 0)
+		ui->channelSetup->setCurrentIndex(4);
+	if (strcmp(speakers, "5.1") == 0)
+		ui->channelSetup->setCurrentIndex(5);
+	if (strcmp(speakers, "5.1surround") == 0)
+		ui->channelSetup->setCurrentIndex(6);
+	if (strcmp(speakers, "7.1") == 0)
+		ui->channelSetup->setCurrentIndex(7);
+	if (strcmp(speakers, "7.1surround") == 0)
+		ui->channelSetup->setCurrentIndex(8);
+	if (strcmp(speakers, "8.0") == 0)
+		ui->channelSetup->setCurrentIndex(9);	
+	if (strcmp(speakers, "16.0") == 0)
+		ui->channelSetup->setCurrentIndex(10);
 
 	LoadAudioDevices();
 	LoadAudioSources();
@@ -2868,7 +2886,46 @@ void OBSBasicSettings::SaveAudioSettings()
 	QString sampleRateStr  = ui->sampleRate->currentText();
 	int channelSetupIdx    = ui->channelSetup->currentIndex();
 
-	const char *channelSetup = (channelSetupIdx == 0) ? "Mono" : "Stereo";
+	const char *channelSetup;
+	switch (channelSetupIdx)	{
+	case 0:
+		channelSetup = "Mono";
+		break;
+	case 1:
+		channelSetup = "Stereo";
+		break;
+	case 2:
+		channelSetup = "2.1";
+		break;
+	case 3:
+		channelSetup = "4.0 Quad";
+		break;
+	case 4:
+		channelSetup = "4.1";
+		break;
+	case 5:
+		channelSetup = "5.1";
+		break;
+	case 6:
+		channelSetup = "5.1surround";
+		break;
+	case 7:
+		channelSetup = "7.1";
+		break;
+	case 8:
+		channelSetup = "7.1surround";
+		break;
+	case 9:
+		channelSetup = "8.0";
+		break;
+	case 10:
+		channelSetup = "16.0";
+		break;
+
+	default:
+		channelSetup = "Stereo";
+		break;
+	}
 
 	int sampleRate = 44100;
 	if (sampleRateStr == "48khz")
