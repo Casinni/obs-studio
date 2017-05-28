@@ -11,6 +11,7 @@
 
 #define ISSTEREO(flag) ((flag) == SPEAKERS_STEREO)
 #define IS7POINT1(flag) ((flag) == SPEAKERS_7POINT1)
+#define DOWNMIX_FLAG(flag) ((flag) == true)
 
 static inline enum video_format ConvertPixelFormat(BMDPixelFormat format)
 {
@@ -27,10 +28,17 @@ static inline enum video_format ConvertPixelFormat(BMDPixelFormat format)
 static inline int ConvertChannelFormat(speaker_layout format)
 {
 	switch (format) {
+	case SPEAKERS_QUAD:
+	case SPEAKERS_4POINT1:
 	case SPEAKERS_5POINT1:
 	case SPEAKERS_5POINT1_SURROUND:
 	case SPEAKERS_7POINT1:
+	case SPEAKERS_7POINT1_SURROUND:
+	case SPEAKERS_OCTAGONAL:
 		return 8;
+
+	case SPEAKERS_HEXADECAGONAL:
+		return 16;
 
 	default:
 	case SPEAKERS_STEREO:
@@ -41,13 +49,19 @@ static inline int ConvertChannelFormat(speaker_layout format)
 static inline audio_repack_mode_t ConvertRepackFormat(speaker_layout format)
 {
 	switch (format) {
+	case SPEAKERS_QUAD:
+	case SPEAKERS_4POINT1:
 	case SPEAKERS_5POINT1:
 	case SPEAKERS_5POINT1_SURROUND:
 		return repack_mode_8to6ch_swap23;
 
+
 	case SPEAKERS_7POINT1:
-		//return repack_mode_8ch_swap23;
-		assert(false && "No repack requested");
+	case SPEAKERS_7POINT1_SURROUND:
+		return repack_mode_8ch_swap23;
+
+	case SPEAKERS_OCTAGONAL:
+	case SPEAKERS_HEXADECAGONAL:
 		return (audio_repack_mode_t)-1;
 
 	default:
@@ -87,7 +101,7 @@ void DeckLinkDeviceInstance::HandleAudioPacket(
 	currentPacket.timestamp   = timestamp;
 
 	if (!ISSTEREO(channelFormat)) {
-		if (!IS7POINT1(channelFormat)) {
+		if ( DOWNMIX_FLAG(downmixing) == true ) {
 			if (audioRepacker->repack((uint8_t *)bytes, frameCount) < 0) {
 				LOG(LOG_ERROR, "Failed to convert audio packet data");
 				return;
@@ -183,10 +197,10 @@ bool DeckLinkDeviceInstance::StartCapture(DeckLinkDeviceMode *mode_)
 		if (audioResult != S_OK)
 			LOG(LOG_WARNING, "Failed to enable audio input; continuing...");
 
-		//if (!ISSTEREO(channelFormat)) {
-		//	const audio_repack_mode_t repack_mode = ConvertRepackFormat(channelFormat);
-		//	audioRepacker = new AudioRepacker(repack_mode);
-		//}
+		if ( (!ISSTEREO(channelFormat)) && (DOWNMIX_FLAG(downmixing)) ) {
+			const audio_repack_mode_t repack_mode = ConvertRepackFormat(channelFormat);
+			audioRepacker = new AudioRepacker(repack_mode);
+		}
 	}
 
 	if (input->SetCallback(this) != S_OK) {

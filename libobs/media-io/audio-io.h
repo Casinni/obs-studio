@@ -26,7 +26,7 @@ extern "C" {
 #endif
 
 #define MAX_AUDIO_MIXES     6
-#define MAX_AUDIO_CHANNELS  8
+#define MAX_AUDIO_CHANNELS  16
 #define AUDIO_OUTPUT_FRAMES 1024
 
 /*
@@ -63,6 +63,8 @@ enum speaker_layout {
 	SPEAKERS_7POINT1,
 	SPEAKERS_7POINT1_SURROUND,
 	SPEAKERS_SURROUND,
+	SPEAKERS_OCTAGONAL,
+	SPEAKERS_HEXADECAGONAL,
 };
 
 struct audio_data {
@@ -109,6 +111,8 @@ static inline uint32_t get_audio_channels(enum speaker_layout speakers)
 	case SPEAKERS_5POINT1_SURROUND: return 6;
 	case SPEAKERS_7POINT1:          return 8;
 	case SPEAKERS_7POINT1_SURROUND: return 8;
+	case SPEAKERS_OCTAGONAL:		return 8;
+	case SPEAKERS_HEXADECAGONAL:	return 16;
 	case SPEAKERS_UNKNOWN:          return 0;
 	}
 

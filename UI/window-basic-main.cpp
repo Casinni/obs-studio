@@ -2781,11 +2781,26 @@ bool OBSBasic::ResetAudio()
 	const char *channelSetupStr = config_get_string(basicConfig,
 			"Audio", "ChannelSetup");
 
+	if (strcmp(channelSetupStr, "Mono") == 0)
+		ai.speakers = SPEAKERS_MONO;
+	if (strcmp(channelSetupStr, "Stereo") == 0)
+		ai.speakers = SPEAKERS_STEREO;
+	if (strcmp(channelSetupStr, "4.0") == 0)
+		ai.speakers = SPEAKERS_QUAD;
+	if (strcmp(channelSetupStr, "4.1") == 0)
+		ai.speakers = SPEAKERS_4POINT1;
+	if (strcmp(channelSetupStr, "5.1") == 0)
+		ai.speakers = SPEAKERS_5POINT1;
+	if (strcmp(channelSetupStr, "5.1surround") == 0)
+		ai.speakers = SPEAKERS_5POINT1_SURROUND;
 	if (strcmp(channelSetupStr, "7.1") == 0)
 		ai.speakers = SPEAKERS_7POINT1;
-	else
-		ai.speakers = SPEAKERS_STEREO;
-
+	if (strcmp(channelSetupStr, "7.1surround") == 0)
+		ai.speakers = SPEAKERS_7POINT1_SURROUND;
+	if (strcmp(channelSetupStr, "8.0") == 0)
+		ai.speakers = SPEAKERS_OCTAGONAL;
+	if (strcmp(channelSetupStr, "16.0") == 0)
+		ai.speakers = SPEAKERS_HEXADECAGONAL;
 	return obs_reset_audio(&ai);
 }
 

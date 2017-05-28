@@ -3013,16 +3013,11 @@
          <item row="1" column="1">
           <widget class="QComboBox" name="channelSetup">
            <property name="currentText">
-            <string>7.1</string>
+            <string>8.0</string>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>6</number>
            </property>
-            <item>
-              <property name="text">
-                <string>7.1</string>
-              </property>
-            </item>
            <item>
             <property name="text">
              <string>Mono</string>
@@ -3033,6 +3028,36 @@
              <string>Stereo</string>
             </property>
            </item>
+            <item>
+              <property name="text">
+                <string>4.0</string>
+              </property>
+            </item>
+            <item>
+              <property name="text">
+                <string>4.1</string>
+              </property>
+            </item>
+            <item>
+              <property name="text">
+                <string>5.1</string>
+              </property>
+            </item>
+            <item>
+              <property name="text">
+                <string>7.1</string>
+              </property>
+            </item>
+            <item>
+              <property name="text">
+                <string>8.0</string>
+              </property>
+            </item>
+            <item>
+              <property name="text">
+                <string>16.0</string>
+              </property>
+            </item>
           </widget>
          </item>
          <item row="2" column="0">
