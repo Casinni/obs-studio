@@ -66,7 +66,7 @@ static void decklink_update(void *data, obs_data_t *settings)
 			PIXEL_FORMAT);
 	speaker_layout channelFormat = (speaker_layout)obs_data_get_int(settings,
 			CHANNEL_FORMAT);
-	bool downmixing = obs_data_get_int(settings, DOWNMIX);
+	bool downmixing = obs_data_get_bool(settings, DOWNMIX);
 
 	decklink_enable_buffering(decklink,
 			obs_data_get_bool(settings, BUFFERING));
@@ -76,6 +76,7 @@ static void decklink_update(void *data, obs_data_t *settings)
 
 	decklink->SetPixelFormat(pixelFormat);
 	decklink->SetChannelFormat(channelFormat);
+	decklink->SetDownmix(downmixing);
 	decklink->Activate(device, id);
 }
 
@@ -84,7 +85,7 @@ static void decklink_get_defaults(obs_data_t *settings)
 	obs_data_set_default_bool(settings, BUFFERING, true);
 	obs_data_set_default_int(settings, PIXEL_FORMAT, bmdFormat8BitYUV);
 	obs_data_set_default_int(settings, CHANNEL_FORMAT, SPEAKERS_OCTAGONAL);
-	obs_data_set_default_int(settings, DOWNMIX, true);
+	obs_data_set_default_bool(settings, DOWNMIX, true);
 }
 
 static const char *decklink_get_name(void*)

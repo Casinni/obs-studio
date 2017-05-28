@@ -23,6 +23,7 @@ protected:
 	std::recursive_mutex                  deviceMutex;
 	BMDPixelFormat                        pixelFormat = bmdFormat8BitYUV;
 	speaker_layout                        channelFormat = SPEAKERS_OCTAGONAL;
+	bool								  downmixing = true;
 
 	void SaveSettings();
 	static void DevicesChanged(void *param, DeckLinkDevice *device,
@@ -51,5 +52,10 @@ public:
 	bool Activate(DeckLinkDevice *device, long long modeId);
 	void Deactivate();
 
-	bool downmixing = true ;
+	inline bool GetDownmix() {return downmixing;}
+	inline void SetDownmix(bool x)
+	{
+		downmixing = x;
+	}
+	
 };

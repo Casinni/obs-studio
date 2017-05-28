@@ -187,6 +187,7 @@ bool DeckLinkDeviceInstance::StartCapture(DeckLinkDeviceMode *mode_)
 
 	channelFormat = decklink->GetChannelFormat();
 	currentPacket.speakers = channelFormat;
+	downmixing = decklink->GetDownmixing();
 
 	if (channelFormat != SPEAKERS_UNKNOWN) {
 		const int channel = ConvertChannelFormat(channelFormat);
