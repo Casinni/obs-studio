@@ -23,7 +23,7 @@ protected:
 	std::recursive_mutex                  deviceMutex;
 	BMDPixelFormat                        pixelFormat = bmdFormat8BitYUV;
 	speaker_layout                        channelFormat = SPEAKERS_OCTAGONAL;
-	bool								  downmixing = true;
+	bool                                  downmixing = false;
 
 	void SaveSettings();
 	static void DevicesChanged(void *param, DeckLinkDevice *device,

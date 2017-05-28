@@ -10,7 +10,6 @@
 		obs_source_get_name(this->decklink->GetSource()), ##__VA_ARGS__)
 
 #define ISSTEREO(flag) ((flag) == SPEAKERS_STEREO)
-#define IS7POINT1(flag) ((flag) == SPEAKERS_7POINT1)
 
 static inline enum video_format ConvertPixelFormat(BMDPixelFormat format)
 {
@@ -107,7 +106,7 @@ void DeckLinkDeviceInstance::HandleAudioPacket(
 				return;
 			}
 			currentPacket.data[0] = (*audioRepacker)->packet_buffer;
-			LOG(LOG_ERROR, "downmixing" + decklink->GetDownmix());
+			LOG(LOG_ERROR, "downmixing is" + decklink->GetDownmix());
 		}
 		else {
 			currentPacket.data[0] = (uint8_t *)bytes;
@@ -199,10 +198,13 @@ bool DeckLinkDeviceInstance::StartCapture(DeckLinkDeviceMode *mode_)
 		if (audioResult != S_OK)
 			LOG(LOG_WARNING, "Failed to enable audio input; continuing...");
 
-		if ( (!ISSTEREO(channelFormat)) && (downmixing) ) {
-			const audio_repack_mode_t repack_mode = ConvertRepackFormat(channelFormat);
+		if (!ISSTEREO(channelFormat)) {
+			if (downmixing) {
+			const audio_repack_mode_t repack_mode = ConvertRepackFormat
+			(channelFormat);
 			audioRepacker = new AudioRepacker(repack_mode);
-		}
+			}
+		}		
 	}
 
 	if (input->SetCallback(this) != S_OK) {

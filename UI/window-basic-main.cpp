@@ -1076,8 +1076,7 @@ bool OBSBasic::InitBasicConfigDefaults()
 			Str("Basic.Settings.Advanced.Audio.MonitoringDevice"
 				".Default"));
 	config_set_default_uint  (basicConfig, "Audio", "SampleRate", 44100);
-	config_set_default_string(basicConfig, "Audio", "ChannelSetup",
-			"7.1");
+	config_set_default_string(basicConfig, "Audio", "ChannelSetup", "Stereo");
 
 	return true;
 }

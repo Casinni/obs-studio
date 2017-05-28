@@ -3013,10 +3013,10 @@
          <item row="1" column="1">
           <widget class="QComboBox" name="channelSetup">
            <property name="currentText">
-            <string>8.0</string>
+            <string>Stereo</string>
            </property>
            <property name="currentIndex">
-            <number>6</number>
+            <number>1</number>
            </property>
            <item>
             <property name="text">

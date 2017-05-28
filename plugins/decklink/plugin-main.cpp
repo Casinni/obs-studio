@@ -14,7 +14,7 @@ OBS_MODULE_USE_DEFAULT_LOCALE("decklink", "en-US")
 #define CHANNEL_FORMAT  "channel_format"
 #define PIXEL_FORMAT    "pixel_format"
 #define BUFFERING       "buffering"
-#define DOWNMIX			"downmix"
+#define DOWNMIX         "downmix"
 
 #define TEXT_DEVICE                     obs_module_text("Device")
 #define TEXT_MODE                       obs_module_text("Mode")
@@ -30,7 +30,7 @@ OBS_MODULE_USE_DEFAULT_LOCALE("decklink", "en-US")
 #define TEXT_CHANNEL_FORMAT_8_0CH       obs_module_text("ChannelFormat.8_0ch")
 #define TEXT_CHANNEL_FORMAT_16_0CH      obs_module_text("ChannelFormat.16_0ch")
 #define TEXT_BUFFERING                  obs_module_text("Buffering")
-#define	TEXT_DOWNMIX_DECKLINK			obs_module_text("Downmix to Stereo")
+#define	TEXT_DOWNMIX_DECKLINK			obs_module_text("Downmix to Stereo (requires Audio set to Stereo in Main Settings)")
 
 static DeckLinkDeviceDiscovery *deviceEnum = nullptr;
 
@@ -85,7 +85,7 @@ static void decklink_get_defaults(obs_data_t *settings)
 	obs_data_set_default_bool(settings, BUFFERING, true);
 	obs_data_set_default_int(settings, PIXEL_FORMAT, bmdFormat8BitYUV);
 	obs_data_set_default_int(settings, CHANNEL_FORMAT, SPEAKERS_OCTAGONAL);
-	obs_data_set_default_bool(settings, DOWNMIX, true);
+	obs_data_set_default_bool(settings, DOWNMIX, false);
 }
 
 static const char *decklink_get_name(void*)
