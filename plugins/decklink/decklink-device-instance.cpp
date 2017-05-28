@@ -11,7 +11,6 @@
 
 #define ISSTEREO(flag) ((flag) == SPEAKERS_STEREO)
 #define IS7POINT1(flag) ((flag) == SPEAKERS_7POINT1)
-#define DOWNMIX_FLAG(flag) ((flag) == true)
 
 static inline enum video_format ConvertPixelFormat(BMDPixelFormat format)
 {
@@ -99,14 +98,16 @@ void DeckLinkDeviceInstance::HandleAudioPacket(
 	const uint32_t frameCount = (uint32_t)audioPacket->GetSampleFrameCount();
 	currentPacket.frames      = frameCount;
 	currentPacket.timestamp   = timestamp;
+	downmixing = decklink->GetDownmix();
 
 	if (!ISSTEREO(channelFormat)) {
-		if ( DOWNMIX_FLAG(downmixing) == true ) {
+		if (downmixing) {
 			if (audioRepacker->repack((uint8_t *)bytes, frameCount) < 0) {
 				LOG(LOG_ERROR, "Failed to convert audio packet data");
 				return;
 			}
 			currentPacket.data[0] = (*audioRepacker)->packet_buffer;
+			LOG(LOG_ERROR, "downmixing" + decklink->GetDownmix());
 		}
 		else {
 			currentPacket.data[0] = (uint8_t *)bytes;
@@ -187,7 +188,7 @@ bool DeckLinkDeviceInstance::StartCapture(DeckLinkDeviceMode *mode_)
 
 	channelFormat = decklink->GetChannelFormat();
 	currentPacket.speakers = channelFormat;
-	downmixing = decklink->GetDownmixing();
+	downmixing = decklink->GetDownmix();
 
 	if (channelFormat != SPEAKERS_UNKNOWN) {
 		const int channel = ConvertChannelFormat(channelFormat);
@@ -198,7 +199,7 @@ bool DeckLinkDeviceInstance::StartCapture(DeckLinkDeviceMode *mode_)
 		if (audioResult != S_OK)
 			LOG(LOG_WARNING, "Failed to enable audio input; continuing...");
 
-		if ( (!ISSTEREO(channelFormat)) && (DOWNMIX_FLAG(downmixing)) ) {
+		if ( (!ISSTEREO(channelFormat)) && (downmixing) ) {
 			const audio_repack_mode_t repack_mode = ConvertRepackFormat(channelFormat);
 			audioRepacker = new AudioRepacker(repack_mode);
 		}

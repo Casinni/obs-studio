@@ -19,6 +19,7 @@ protected:
 	uint64_t                lastVideoTS = 0;
 	AudioRepacker           *audioRepacker = nullptr;
 	speaker_layout          channelFormat = SPEAKERS_OCTAGONAL;
+	bool					downmixing = true;
 
 	void FinalizeStream();
 

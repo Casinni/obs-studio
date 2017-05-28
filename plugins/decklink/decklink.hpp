@@ -52,7 +52,7 @@ public:
 	bool Activate(DeckLinkDevice *device, long long modeId);
 	void Deactivate();
 
-	inline bool GetDownmix() {return downmixing;}
+	inline bool GetDownmix() const {return downmixing;}
 	inline void SetDownmix(bool x)
 	{
 		downmixing = x;
