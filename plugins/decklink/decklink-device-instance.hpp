@@ -18,8 +18,8 @@ protected:
 	uint64_t                nextAudioTS = 0;
 	uint64_t                lastVideoTS = 0;
 	AudioRepacker           *audioRepacker = nullptr;
-	speaker_layout          channelFormat = SPEAKERS_7POINT1;
-
+	speaker_layout          channelFormat = SPEAKERS_OCTAGONAL;
+	speaker_layout          output_speaker_layout = SPEAKERS_STEREO;
 	void FinalizeStream();
 
 	void HandleAudioPacket(IDeckLinkAudioInputPacket *audioPacket,

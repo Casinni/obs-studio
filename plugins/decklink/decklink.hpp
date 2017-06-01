@@ -22,7 +22,7 @@ protected:
 	volatile long                         activateRefs = 0;
 	std::recursive_mutex                  deviceMutex;
 	BMDPixelFormat                        pixelFormat = bmdFormat8BitYUV;
-	speaker_layout                        channelFormat = SPEAKERS_7POINT1;
+	speaker_layout                        channelFormat = SPEAKERS_OCTAGONAL;
 
 	void SaveSettings();
 	static void DevicesChanged(void *param, DeckLinkDevice *device,
@@ -50,4 +50,5 @@ public:
 
 	bool Activate(DeckLinkDevice *device, long long modeId);
 	void Deactivate();
+	
 };

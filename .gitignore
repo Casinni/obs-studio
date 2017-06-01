@@ -20,6 +20,11 @@
 *.ninja
 .ninja*
 .dirstamp
+/bin/
+/bin32/
+/lib32/
+/lib64/
+/bin64/
 
 #xcode
 *.xcodeproj/

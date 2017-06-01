@@ -9,8 +9,15 @@
 #define LOG(level, message, ...) blog(level, "%s: " message, \
 		obs_source_get_name(this->decklink->GetSource()), ##__VA_ARGS__)
 
-#define ISSTEREO(flag) ((flag) == SPEAKERS_STEREO)
-#define IS7POINT1(flag) ((flag) == SPEAKERS_7POINT1)
+#define INPUTISSTEREO(flag) ((flag) == SPEAKERS_STEREO)
+#define OUTPUTISSTEREO(flag) ((flag) == SPEAKERS_STEREO)
+
+speaker_layout GetOutputStereoState() {
+	struct obs_audio_info oai;
+	obs_get_audio_info(&oai);
+	speaker_layout outputspeakers = oai.speakers;
+	return outputspeakers;
+}
 
 static inline enum video_format ConvertPixelFormat(BMDPixelFormat format)
 {
@@ -27,10 +34,17 @@ static inline enum video_format ConvertPixelFormat(BMDPixelFormat format)
 static inline int ConvertChannelFormat(speaker_layout format)
 {
 	switch (format) {
+	case SPEAKERS_QUAD:
+	case SPEAKERS_4POINT1:
 	case SPEAKERS_5POINT1:
 	case SPEAKERS_5POINT1_SURROUND:
 	case SPEAKERS_7POINT1:
+	case SPEAKERS_7POINT1_SURROUND:
+	case SPEAKERS_OCTAGONAL:
 		return 8;
+
+	case SPEAKERS_HEXADECAGONAL:
+		return 16;
 
 	default:
 	case SPEAKERS_STEREO:
@@ -41,14 +55,17 @@ static inline int ConvertChannelFormat(speaker_layout format)
 static inline audio_repack_mode_t ConvertRepackFormat(speaker_layout format)
 {
 	switch (format) {
+
+	case SPEAKERS_4POINT1:
+		repack_mode_8to5ch_swap23;
+
 	case SPEAKERS_5POINT1:
 	case SPEAKERS_5POINT1_SURROUND:
 		return repack_mode_8to6ch_swap23;
 
 	case SPEAKERS_7POINT1:
-		//return repack_mode_8ch_swap23;
-		assert(false && "No repack requested");
-		return (audio_repack_mode_t)-1;
+	case SPEAKERS_7POINT1_SURROUND:
+		return repack_mode_8ch_swap23;
 
 	default:
 		assert(false && "No repack requested");
@@ -61,7 +78,7 @@ DeckLinkDeviceInstance::DeckLinkDeviceInstance(DeckLink *decklink_,
 	currentFrame(), currentPacket(), decklink(decklink_), device(device_)
 {
 	currentPacket.samples_per_sec = 48000;
-	currentPacket.speakers        = SPEAKERS_7POINT1;
+	currentPacket.speakers        = SPEAKERS_OCTAGONAL;
 	currentPacket.format          = AUDIO_FORMAT_16BIT;
 }
 
@@ -85,9 +102,17 @@ void DeckLinkDeviceInstance::HandleAudioPacket(
 	const uint32_t frameCount = (uint32_t)audioPacket->GetSampleFrameCount();
 	currentPacket.frames      = frameCount;
 	currentPacket.timestamp   = timestamp;
+	output_speaker_layout     = GetOutputStereoState();
+	DeckLink * mydecklink = decklink;
+	DeckLinkDevice * mydevice = device;
+	int maxdevicechannel = device->GetMaxChannel();
 
-	if (!ISSTEREO(channelFormat)) {
-		if (!IS7POINT1(channelFormat)) {
+	if ( (channelFormat == SPEAKERS_5POINT1) ||
+		(channelFormat == SPEAKERS_5POINT1_SURROUND) ||
+		(channelFormat == SPEAKERS_7POINT1_SURROUND) || 
+		(channelFormat == SPEAKERS_7POINT1) ) {
+		if ( (OUTPUTISSTEREO(output_speaker_layout)) 
+			&& (maxdevicechannel >= 8)) {
 			if (audioRepacker->repack((uint8_t *)bytes, frameCount) < 0) {
 				LOG(LOG_ERROR, "Failed to convert audio packet data");
 				return;
@@ -173,6 +198,10 @@ bool DeckLinkDeviceInstance::StartCapture(DeckLinkDeviceMode *mode_)
 
 	channelFormat = decklink->GetChannelFormat();
 	currentPacket.speakers = channelFormat;
+	output_speaker_layout = GetOutputStereoState();
+	DeckLink * mydecklink = decklink;
+	DeckLinkDevice * mydevice = device;
+	int maxdevicechannel = device->GetMaxChannel();
 
 	if (channelFormat != SPEAKERS_UNKNOWN) {
 		const int channel = ConvertChannelFormat(channelFormat);
@@ -183,10 +212,18 @@ bool DeckLinkDeviceInstance::StartCapture(DeckLinkDeviceMode *mode_)
 		if (audioResult != S_OK)
 			LOG(LOG_WARNING, "Failed to enable audio input; continuing...");
 
-		//if (!ISSTEREO(channelFormat)) {
-		//	const audio_repack_mode_t repack_mode = ConvertRepackFormat(channelFormat);
-		//	audioRepacker = new AudioRepacker(repack_mode);
-		//}
+		if ((channelFormat == SPEAKERS_4POINT1)||
+			(channelFormat == SPEAKERS_5POINT1) ||
+			(channelFormat == SPEAKERS_5POINT1_SURROUND) ||
+			(channelFormat == SPEAKERS_7POINT1_SURROUND) ||
+			(channelFormat == SPEAKERS_7POINT1)) {
+			if ((OUTPUTISSTEREO(output_speaker_layout))
+				&& (maxdevicechannel = 8)) {
+			const audio_repack_mode_t repack_mode = ConvertRepackFormat
+			(channelFormat);
+			audioRepacker = new AudioRepacker(repack_mode);
+			}
+		}		
 	}
 
 	if (input->SetCallback(this) != S_OK) {

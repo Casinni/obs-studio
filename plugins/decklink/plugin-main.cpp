@@ -21,9 +21,14 @@ OBS_MODULE_USE_DEFAULT_LOCALE("decklink", "en-US")
 #define TEXT_CHANNEL_FORMAT             obs_module_text("ChannelFormat")
 #define TEXT_CHANNEL_FORMAT_NONE        obs_module_text("ChannelFormat.None")
 #define TEXT_CHANNEL_FORMAT_2_0CH       obs_module_text("ChannelFormat.2_0ch")
+#define TEXT_CHANNEL_FORMAT_4_0CH       obs_module_text("ChannelFormat.4_0ch")
+#define TEXT_CHANNEL_FORMAT_4_1CH       obs_module_text("ChannelFormat.4_1ch")
 #define TEXT_CHANNEL_FORMAT_5_1CH       obs_module_text("ChannelFormat.5_1ch")
-#define TEXT_CHANNEL_FORMAT_5_1CH_BACK  obs_module_text("ChannelFormat.5_1chBack")
+#define TEXT_CHANNEL_FORMAT_5_1CH_BACK  obs_module_text("ChannelFormat.5_1chBk")
 #define TEXT_CHANNEL_FORMAT_7_1CH       obs_module_text("ChannelFormat.7_1ch")
+#define TEXT_CHANNEL_FORMAT_7_1CH_BACK  obs_module_text("ChannelFormat.7_1chBk")
+#define TEXT_CHANNEL_FORMAT_8_0CH       obs_module_text("ChannelFormat.8_0ch")
+#define TEXT_CHANNEL_FORMAT_16_0CH      obs_module_text("ChannelFormat.16_0ch")
 #define TEXT_BUFFERING                  obs_module_text("Buffering")
 
 static DeckLinkDeviceDiscovery *deviceEnum = nullptr;
@@ -42,7 +47,7 @@ static void *decklink_create(obs_data_t *settings, obs_source_t *source)
 			obs_data_get_bool(settings, BUFFERING));
 
 	obs_source_update(source, settings);
-	return decklink;
+		return decklink;
 }
 
 static void decklink_destroy(void *data)
@@ -76,7 +81,7 @@ static void decklink_get_defaults(obs_data_t *settings)
 {
 	obs_data_set_default_bool(settings, BUFFERING, true);
 	obs_data_set_default_int(settings, PIXEL_FORMAT, bmdFormat8BitYUV);
-	obs_data_set_default_int(settings, CHANNEL_FORMAT, SPEAKERS_7POINT1);
+	obs_data_set_default_int(settings, CHANNEL_FORMAT, SPEAKERS_STEREO);
 }
 
 static const char *decklink_get_name(void*)
@@ -118,8 +123,6 @@ static bool decklink_device_changed(obs_properties_t *props,
 			SPEAKERS_UNKNOWN);
 	obs_property_list_add_int(channelList, TEXT_CHANNEL_FORMAT_2_0CH,
 			SPEAKERS_STEREO);
-	obs_property_list_add_int(channelList, TEXT_CHANNEL_FORMAT_7_1CH,
-		SPEAKERS_7POINT1);
 
 	ComPtr<DeckLinkDevice> device;
 	device.Set(deviceEnum->FindByHash(hash));
@@ -138,12 +141,22 @@ static bool decklink_device_changed(obs_properties_t *props,
 		}
 
 		if (device->GetMaxChannel() >= 8) {
+			obs_property_list_add_int(channelList, TEXT_CHANNEL_FORMAT_4_0CH,
+				SPEAKERS_QUAD);
+			obs_property_list_add_int(channelList, TEXT_CHANNEL_FORMAT_4_1CH,
+				SPEAKERS_4POINT1);
 			obs_property_list_add_int(channelList, TEXT_CHANNEL_FORMAT_5_1CH,
 					SPEAKERS_5POINT1);
-			obs_property_list_add_int(channelList, TEXT_CHANNEL_FORMAT_5_1CH_BACK,
-					SPEAKERS_5POINT1_SURROUND);
+			obs_property_list_add_int(channelList, 
+				TEXT_CHANNEL_FORMAT_5_1CH_BACK, SPEAKERS_5POINT1_SURROUND);
 			obs_property_list_add_int(channelList, TEXT_CHANNEL_FORMAT_7_1CH,
 					SPEAKERS_7POINT1);
+			obs_property_list_add_int(channelList, TEXT_CHANNEL_FORMAT_7_1CH,
+				SPEAKERS_7POINT1_SURROUND);
+			obs_property_list_add_int(channelList, TEXT_CHANNEL_FORMAT_8_0CH,
+				SPEAKERS_OCTAGONAL);
+			obs_property_list_add_int(channelList, TEXT_CHANNEL_FORMAT_16_0CH,
+				SPEAKERS_HEXADECAGONAL);
 		}
 	}
 
@@ -190,8 +203,20 @@ static obs_properties_t *decklink_get_properties(void *data)
 			SPEAKERS_UNKNOWN);
 	obs_property_list_add_int(list, TEXT_CHANNEL_FORMAT_2_0CH,
 			SPEAKERS_STEREO);
+	obs_property_list_add_int(list, TEXT_CHANNEL_FORMAT_4_0CH,
+		SPEAKERS_QUAD);
+	obs_property_list_add_int(list, TEXT_CHANNEL_FORMAT_4_1CH,
+			SPEAKERS_4POINT1);
+	obs_property_list_add_int(list, TEXT_CHANNEL_FORMAT_5_1CH,
+		SPEAKERS_5POINT1);
+	obs_property_list_add_int(list, TEXT_CHANNEL_FORMAT_5_1CH_BACK,
+		SPEAKERS_5POINT1_SURROUND);
 	obs_property_list_add_int(list, TEXT_CHANNEL_FORMAT_7_1CH,
 		SPEAKERS_7POINT1);
+	obs_property_list_add_int(list, TEXT_CHANNEL_FORMAT_8_0CH,
+		SPEAKERS_OCTAGONAL);
+	obs_property_list_add_int(list, TEXT_CHANNEL_FORMAT_16_0CH,
+		SPEAKERS_HEXADECAGONAL);
 
 	obs_properties_add_bool(props, BUFFERING, TEXT_BUFFERING);
 

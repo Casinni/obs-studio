@@ -28,8 +28,9 @@ int check_buffer(struct audio_repack *repack,
 	  |    |       x      |    |
 	| FL | FR | FC |LFE | BL | BR |
  */
+
 int repack_8to6ch_swap23(struct audio_repack *repack,
-		const uint8_t *bsrc, uint32_t frame_count)
+	const uint8_t *bsrc, uint32_t frame_count)
 {
 	if (check_buffer(repack, frame_count) < 0)
 		return -1;
@@ -47,15 +48,32 @@ int repack_8to6ch_swap23(struct audio_repack *repack,
 	return 0;
 }
 
-/*
-	Swap channel between LFE and FC
+int repack_8to5ch_swap23(struct audio_repack *repack,
+	const uint8_t *bsrc, uint32_t frame_count)
+{
+	if (check_buffer(repack, frame_count) < 0)
+		return -1;
 
-	| FL | FR |LFE | FC | BL | BR |SBL |SBR |
-	  |    |       x      |    |    |    |
-	| FL | FR | FC |LFE | BL | BR |SBL |SBR |
- */
+	const __m128i *src = (__m128i *)bsrc;
+	const __m128i *esrc = src + frame_count;
+	uint32_t *dst = (uint32_t *)repack->packet_buffer;
+	while (src != esrc) {
+		__m128i target = _mm_load_si128(src++);
+		__m128i buf = _mm_shufflelo_epi16(target, _MM_SHUFFLE(2, 3, 1, 0));
+		_mm_storeu_si128((__m128i *)dst, buf);
+		dst += 4;
+	}
+
+	return 0;
+}
+/*
+Swap channel between LFE and FC
+| FL | FR |LFE | FC | BL | BR |SBL |SBR |
+|    |       x      |    |    |    |
+| FL | FR | FC |LFE | BL | BR |SBL |SBR |
+*/
 int repack_8ch_swap23(struct audio_repack *repack,
-		const uint8_t *bsrc, uint32_t frame_count)
+	const uint8_t *bsrc, uint32_t frame_count)
 {
 	if (check_buffer(repack, frame_count) < 0)
 		return -1;
@@ -73,7 +91,7 @@ int repack_8ch_swap23(struct audio_repack *repack,
 }
 
 int audio_repack_init(struct audio_repack *repack,
-		audio_repack_mode_t repack_mode, uint8_t sample_bit)
+	audio_repack_mode_t repack_mode, uint8_t sample_bit)
 {
 	memset(repack, 0, sizeof(*repack));
 
@@ -82,17 +100,24 @@ int audio_repack_init(struct audio_repack *repack,
 
 	switch (repack_mode) {
 	case repack_mode_8to6ch_swap23:
-		repack->base_src_size  = 8 * (16 / 8);
-		repack->base_dst_size  = 6 * (16 / 8);
+		repack->base_src_size = 8 * (16 / 8);
+		repack->base_dst_size = 6 * (16 / 8);
 		repack->extra_dst_size = 2;
-		repack->repack_func    = &repack_8to6ch_swap23;
+		repack->repack_func = &repack_8to6ch_swap23;
+		break;
+
+	case repack_mode_8to5ch_swap23:
+		repack->base_src_size = 8 * (16 / 8);
+		repack->base_dst_size = 5 * (16 / 8);
+		repack->extra_dst_size = 3;
+		repack->repack_func = &repack_8to5ch_swap23;
 		break;
 
 	case repack_mode_8ch_swap23:
-		repack->base_src_size  = 8 * (16 / 8);
-		repack->base_dst_size  = 8 * (16 / 8);
+		repack->base_src_size = 8 * (16 / 8);
+		repack->base_dst_size = 8 * (16 / 8);
 		repack->extra_dst_size = 0;
-		repack->repack_func    = &repack_8ch_swap23;
+		repack->repack_func = &repack_8ch_swap23;
 		break;
 
 	default: return -1;
